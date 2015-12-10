@@ -1,7 +1,12 @@
 # iLogicCodeInjector - UPDATE! (12/10/2015)
 
+<<<<<<< HEAD
 I have taken some time to fix a few problems that existed in previous versions of the Code Injector. 
 This should now create iLogic Event Triggers correctly across new and old Inventor documents. 
+=======
+##The Latest Known Update
+You can find the latest known update here-
+>>>>>>> origin/master
 
 Because the Autodesk - Being Inventive blog no longer seems to be updated, this repository will serve 
 as the (new?) home to this project. 
