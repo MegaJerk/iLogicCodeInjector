@@ -1,42 +1,4 @@
-﻿'Created by : Mega Jerk : Year - 2012. 
-'Feel free to modify / share / destroy / salvage / lubricate any of the code found inside of this project.
-'I made this partially because I enjoyed the challenge of figuring out where Autodesk hid all of those -
-'pesky little Event Triggers, partially because I kept seeing posts on the forum (including my own) about 
-' doing this very thing, and of course partially because I wanted my job to be easier so that I'd have more time
-'to do important things like pondering the meaning of life. 
-'
-'Perhaps this will make your life easier... Perhaps not. No matter, I've released it into the wild so that 
-'better coders than I can take a look at it and maybe give it some more sexier uses. 
-'
-'
-'Known issues / problems : READ ME!!!!!
-'
-'*Turns out that the problem described below, could have been caused by a particularly old set of Inventor
-'*files that had been carried over several releases. As I state, I've not experienced any problems from
-'*up to date files when using this program, so perhaps it was just a fluke rather than something more 
-'*hidden...  (Update : Feb/6/2012
-'
-'UPDATE 2/14/2012 (12:57am EST)
-'The comments marked "''''OLD''' seem to have been fixed by the updated code commented at "UPDATE 2/14/2012 (12:57am EST)" 
-'
-''''OLD'''After testing this over the week at my workplace, I have found that there are certain files that simply
-''''OLD'''WILL NOT allow an Event Trigger to be placed on them. Not only that, but it will then prevent the user
-''''OLD'''from using the Inventor UI to set up a trigger manually, as it errors out with a JIT debugger. 
-''''OLD'''Every file that we've had this happen on has been an older Inventor file that has simply been lugged over
-''''OLD'''release after release. Many of them had old VBA code still attached to them from the old days before my
-''''OLD'''company started using iLogic. As of this moment I am unable to solve this problem (though I do have a few
-''''OLD'''ideas floating around my brain), which means that it is advisable to make a backup of any critical work
-''''OLD'''just in case this turns it into complete jelly. If anyone of your wonderful (better) programmers would
-''''OLD'''like to look into that issue, or have run into before (and fixed it), I would love to hear from you! 
-''''OLD'''Simply look me up (MegaJerk) on the autodesk discussion group forum, and send me a private message. 
-'
-' - Mega Jerk
-'
-'
-'PS: Sorry for any spelling errors! It's nearly 1am! 
-'
-
-Imports System
+﻿Imports System
 Imports System.Type
 Imports System.Activator
 Imports System.Runtime.InteropServices
@@ -47,8 +9,24 @@ Imports Autodesk.iLogic.Automation
 Imports Autodesk.iLogic.Interfaces
 
 Public Class Code_Injector
-    Dim openInventorApp As Inventor.Application
+    Public openInventorApp As Inventor.Application
+    'Create a new object called iLogicObject
+
     Dim wasStarted As Boolean = False
+
+    Dim invProcess As New InventorProcess()
+
+    Public Sub New()
+
+        ' This call is required by the designer.
+        InitializeComponent()
+
+        ' Add any initialization after the InitializeComponent() call.
+        invProcess.StartInventor()
+        openInventorApp = invProcess.Application
+        openInventorApp.Visible = False
+
+    End Sub
 
     'All of the Subs that handle the preparation work are found first, while the workhorses are found further below (Specifically after the Sub Button_1Click).
 
@@ -106,7 +84,7 @@ Public Class Code_Injector
         If Directory_Browse_Dialog.ShowDialog() = Windows.Forms.DialogResult.OK Then
 
 
-            Dim IPTExt, IAMExt, IDWExt As String
+            Dim IPTExt, IAMExt, IDWExt, DWGExt As String
 
             'Looks at the state of IPT check box, to see whether or not it's checked.
             If CheckIPT.CheckState = CheckState.Checked Then
@@ -130,6 +108,13 @@ Public Class Code_Injector
                 IDWExt = ""
             End If
 
+            'Looks at the state of DWG check box, to see whether or not it's checked.
+            If CheckDWG.CheckState = CheckState.Checked Then
+                DWGExt = ".dwg"
+            Else
+                DWGExt = ""
+            End If
+
             'Checks to see if there are any items already in the list of queue files. 
             'If there are, then we will clear them from that list. 
 
@@ -142,38 +127,51 @@ Public Class Code_Injector
             Dim DirectoryPath As String
             DirectoryPath = Directory_Browse_Dialog.SelectedPath
 
-            'Sets DirectoryContents to be of the class DirectoryInfo, and specifically points to the path
-            'that our selected folder is at.
 
-            Dim DirectoryContents As New DirectoryInfo(DirectoryPath)
-            Dim SelectedFileInfo As FileSystemInfo
+            Dim _files As Stack = getFiletypes(DirectoryPath, {"*.ipt", "*.iam", "*.idw", "*.dwg"})
 
-            'For every file that we find inside of the directory...
-            For Each SelectedFileInfo In DirectoryContents.GetFileSystemInfos()
+            Dim fileDetail As IO.FileInfo
+            Dim strafile As String = ""
 
+            'For every file that we find inside the directory and its subfolders ...
+            For Each strafile In _files
                 'We do the same thing for each file extension.
                 'If the value of the ???Ext = the extension in question
                 'we'll add it to the list of files in queue. 
 
-                If IPTExt = ".ipt" Then
-                    If SelectedFileInfo.Extension = ".ipt" Then
-                        ListBox1.Items.Add(SelectedFileInfo.FullName)
+
+                fileDetail = My.Computer.FileSystem.GetFileInfo(strafile)
+                'Skip the files in the OldVersions folders
+                If Strings.Right(fileDetail.DirectoryName, 11) <> "OldVersions" Then
+
+                    fileDetail = My.Computer.FileSystem.GetFileInfo(strafile)
+                    If IPTExt = ".ipt" Then
+                        If fileDetail.Extension = ".ipt" Then
+                            ListBox1.Items.Add(fileDetail.FullName)
+                        End If
+                    End If
+
+                    If IAMExt = ".iam" Then
+                        If fileDetail.Extension = ".iam" Then
+                            ListBox1.Items.Add(fileDetail.FullName)
+                        End If
+                    End If
+
+                    If IDWExt = ".idw" Then
+                        If fileDetail.Extension = ".idw" Then
+                            ListBox1.Items.Add(fileDetail.FullName)
+                        End If
+                    End If
+
+                    If DWGExt = ".dwg" Then
+                        If fileDetail.Extension = ".dwg" Then
+                            If openInventorApp.FileManager.IsInventorDWG(strafile) = True Then
+                                ListBox1.Items.Add(fileDetail.FullName)
+                            End If
+                        End If
                     End If
                 End If
-
-                If IAMExt = ".iam" Then
-                    If SelectedFileInfo.Extension = ".iam" Then
-                        ListBox1.Items.Add(SelectedFileInfo.FullName)
-                    End If
-                End If
-
-                If IDWExt = ".idw" Then
-                    If SelectedFileInfo.Extension = ".idw" Then
-                        ListBox1.Items.Add(SelectedFileInfo.FullName)
-                    End If
-                End If
-
-            Next
+            Next strafile
         End If
 
     End Sub
@@ -202,36 +200,17 @@ Public Class Code_Injector
     Private Sub ExitProgram_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ExitProgram_Button.Click
         'Tells the form to run its Close subroutine.
         Me.Close()
+
+        If Not openInventorApp Is Nothing Then
+            openInventorApp.Visible = True
+        End If
     End Sub
 
     'Fires when the program is closing down. This is the Close subroutine
 
     Private Sub Form1_FormClosed(ByVal sender As Object, ByVal e As FormClosedEventArgs) Handles Me.FormClosed
 
-        'If we started Inventor using this program, then we need to decide if we want to close it, or leave it running. 
-        'Natrually if you ALWAYS want to close an Inventor session that was started using this program, then you would simply 
-        'change the code to : 
-        '
-        '
-        'If wasStarted Then
-        '   openInventorApp.Quit()
-        'End If 
-        'openInventorApp = Nothing
-        '
-        '
-        ''''
-
-        If wasStarted Then
-
-            'I used to give the user the option of leaving the Inventor session that was started by this program, running or not. 
-            'It seems that if you leave it running, sometimes, manually closing will not actually close it all the way, and results
-            'in ghost Inventor.exes running the background. 
-
-            'If MessageBox.Show("Would you like to close Inventor?", "Close Inventor?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = vbYes Then
-            openInventorApp.Quit()
-            'End If
-        End If
-        openInventorApp = Nothing
+        invProcess.StopInventor()
     End Sub
 
     'THIS IS WHERE THE MAGIC(S) START TO HAPPEN'
@@ -288,73 +267,6 @@ Public Class Code_Injector
 
 
 
-        'Let's see if Inventor is already open. 
-        Try
-            openInventorApp = Marshal.GetActiveObject("Inventor.Application")
-
-            'If it isn't, then we'll do the following. 
-        Catch ex As Exception
-
-            'Message the user to inform them that the program will attempt to start Inventor for them. 
-            MessageBox.Show("Inventor is not running. Attempting to Start")
-            Try
-
-                'Show our Text to indicate to the user that something is happening! 
-                InventorLoadingText.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer))
-                InventorLoadingText.ForeColor = System.Drawing.SystemColors.ControlText
-
-                'Try to open Inventor using the Program ID
-                Dim invAppType As Type = GetTypeFromProgID("Inventor.Application")
-
-                openInventorApp = CreateInstance(invAppType)
-                openInventorApp.Visible = True
-
-
-
-                'Set wasStarted (which was created by our Class), to true (which tells us that Inventor was not already running
-                'and has been turned on by this program)
-                wasStarted = True
-
-                'If that all fails then... 
-            Catch ex2 As Exception
-
-                'Tell the user that Inventor simply cold not be started and end the sub. 
-                'No work will be done, as no work can be done. 
-
-                MsgBox(ex2.ToString())
-                MsgBox("Unable to start Inventor")
-                Exit Sub
-            End Try
-        End Try
-
-        'I'm sure there is a better way to do this, but I'm a noob... 
-        'Basically until Inventor is ready (fully loaded), I want to flash that 'Loading Inventor' text at the bottom of the program. 
-        'This will do just that, so I don't feel too bad about it!
-
-        Do While openInventorApp.Ready = False
-            Dim i As Integer
-            i = i + 1
-            If i = 20 Then
-                InventorLoadingText.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer))
-                InventorLoadingText.ForeColor = System.Drawing.SystemColors.ControlText
-            ElseIf i = 40 Then
-                InventorLoadingText.BackColor = System.Drawing.SystemColors.Control
-                InventorLoadingText.ForeColor = System.Drawing.SystemColors.Control
-                i = 0
-            End If
-        Loop
-
-        'At this point Inventor is loaded, and we can make that text invisible again. 
-        InventorLoadingText.BackColor = System.Drawing.SystemColors.Control
-        InventorLoadingText.ForeColor = System.Drawing.SystemColors.Control
-
-        'If we started Inventor using this progam, then we want to change the Inventor window caption
-        'to inform the user that it was not started by them. 
-
-        If wasStarted Then
-            openInventorApp.Caption = "Inventor Session Started By Code Injector!"
-        End If
-
         'By turning on the silent operation, we skip all of the dialogs that would normally pop up to inform
         'us that our files are being modified. 
         'Because we are checking (below in the code) if the files are Read Only, we know that we'll only be 
@@ -363,8 +275,6 @@ Public Class Code_Injector
 
 
         'On the other hand, if Inventor is running, we shall continue! 
-
-        'Create a new object called iLogicObject
 
         Dim iLogicObject As Object
 
@@ -408,6 +318,8 @@ Public Class Code_Injector
                 'At this point we'll go to the CreateRule subroutine, passing our Document, and our iLogicObject to it.
                 Call CreateRule(singleDoc, iLogicObject)
 
+                Dim saveEnabled As Boolean = iLogicObject.RulesOnEventsEnabled
+                iLogicObject.RulesOnEventsEnabled = False
                 Try
                     'Save the document and all dependant documents.
                     Call singleDoc.Save2(True)
@@ -421,6 +333,8 @@ Public Class Code_Injector
                                     "Read-Write Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
                     Exit Sub
 
+                Finally
+                    iLogicObject.RulesOnEventsEnabled = saveEnabled
                 End Try
 
                 'Closes the document without any hassle. 
@@ -437,6 +351,7 @@ Public Class Code_Injector
         Next
 
         openInventorApp.SilentOperation = False
+        openInventorApp.Visible = False
         'Once everything is done, and all the files have been modified, we'll inform the user.
         MessageBox.Show("Operation Complete!", "Status : Finished")
 
@@ -500,13 +415,14 @@ NotFound:
                 'We'll create a new rule in the current document, with our rule name, and our rule text
                 'By default when a rule is created, it is ran
                 Call iLogicAuto.Addrule(activeDoc, ruleName, ruleText)
-
+                If DeleteAfterRun_RadioButton.Checked = True Then iLogicAuto.DeleteRule(activeDoc, ruleName) ' Delete rule after run if radiobutton is checked
                 'otherwise...
             Else
 
                 'We will create a rule in the current document, that has a name, but doesn't have any text. 
                 'This way the rule will fire with nothing to do, meaning that it does nothing! 
                 Call iLogicAuto.AddRule(activeDoc, ruleName, "")
+
 
                 'Now we can use that empty object, and grab rule that we just created. 
                 exRule = iLogicAuto.GetRule(activeDoc, ruleName)
@@ -530,6 +446,7 @@ NotFound:
                 If RunRulesOnCreation_CheckBox.CheckState = CheckState.Checked Then
                     exRule.Text = ruleText
                     iLogicAuto.RunRule(activeDoc, ruleName)
+                    If DeleteAfterRun_RadioButton.Checked = True Then iLogicAuto.DeleteRule(activeDoc, ruleName)
                 Else
                     'We'll simply replace the text inside of the existing rule with the text the user entered into the Rule Code Text box.
                     exRule.Text = ruleText
@@ -543,6 +460,7 @@ NotFound:
 
                     If RunRulesOnCreation_CheckBox.CheckState = CheckState.Checked Then
                         iLogicAuto.RunRule(activeDoc, ruleName)
+                        If DeleteAfterRun_RadioButton.Checked = True Then iLogicAuto.DeleteRule(activeDoc, ruleName)
                     End If
 
                     'We'll initialize the Sub InitTriggers, and pass along a Document, and String
@@ -563,6 +481,7 @@ NotFound:
 
                         If RunRulesOnCreation_CheckBox.CheckState = CheckState.Checked Then
                             iLogicAuto.RunRule(activeDoc, ruleName)
+                            If DeleteAfterRun_RadioButton.Checked = True Then iLogicAuto.DeleteRule(activeDoc, ruleName)
                         End If
 
                     Else
@@ -605,10 +524,6 @@ NotFound:
                 VerifyTrigger(currentDoc, currentRuleName, checkedName)
             Next
         End If
-
-
-
-
     End Sub
 
     Private Sub VerifyTrigger(ByVal cDoc As Document, ByVal rName As String, ByVal trigName As String)
@@ -660,7 +575,7 @@ NotFound:
         'it has created a working Trigger, it will actually do nothing. 
         '
         'Below is a list of the Event Triggers for .ipt files (Solid and Sheet Metal) - 
-        '.iam files (Assembly), and .idw files (Drawing Files). I do not know if this if the complete list
+        '.iam files (Assembly), and .idw/.dwg files (Drawing Files). I do not know if this if the complete list
         'of all available triggers inside of Inventor, as there maybe some filetypes / variations that I have
         'overlooked (do not use regularly / at all). If you find that this list is incomplete, feel free to
         'contact me using the information posted at the very topmost comments in this code. 
@@ -675,7 +590,7 @@ NotFound:
         '   Any Model Parameter Change              : AfterAnyParamChange             : 1000
         '   Part Geometry Change**                  : PartBodyChanged                 : 1200
         '   Material Change**                       : AfterMaterialChange             : 1400
-        '   Drawing View Change***                  : AfterDrawingViewsUpdate         : 1500
+        '   Drawing View Change***                  : AfterDrawingViewsUpdate         : 1800
         '   iProperty(Change)                       : AfterAnyiPropertyChange         : 1600
         '   Feature Suppression Change**            : AfterFeatureSuppressionChange   : 2000
         '   Component Suppression Change*           : AfterComponentSuppressionChange : 2200
@@ -692,10 +607,10 @@ NotFound:
         'We will change BaseID to the correct Base PropertyID
         'And we will set where this trigger can be used, with the BaseUse value.
 
-        'A BaseUse of "All" means that it's a Trigger that can be used across the file types (.ipt/.iam/.idw)
+        'A BaseUse of "All" means that it's a Trigger that can be used across the file types (.ipt/.iam/.idw/.dwg)
         'A BaseUse of "Part" means that the trigger can only be used on a .ipt file.
         'A BaseUse of "Assembly" means that the trigger can only be used on a .iam file.
-        'A BaseUse of "Drawing means that the trigger can only be used on a .idw file.
+        'A BaseUse of "Drawing" means that the trigger can only be used on a .idw/.dwg file.
 
         Select Case trigName
             Case "After Open Document"
@@ -728,7 +643,7 @@ NotFound:
                 BaseUse = "Part"
             Case "Drawing View Change***"
                 BaseName = "AfterDrawingViewsUpdate"
-                BaseID = 1500
+                BaseID = 1800
                 BaseUse = "Drawing"
             Case "iProperty Change"
                 BaseName = "AfterAnyiPropertyChange"
@@ -813,58 +728,18 @@ NotFound:
         'TriggerID will hold on to the Trigger's base PropertyID value.
         TriggerID = BaseID
 
-        'I was trying to figure out a way to check if Item (5) AKA: "iLogicEventsRules" actually existed.
-        'Though I'm sure there is a better way of doing it, this is what I came up with. 
-        'It attempts to access the PropertySets.Item, and if it does, then it skips the rest, and sets 
-        'customIPropSet to the item "iLogicEventsRules". 
-        'If it can't find it, and throws an exception, then it will attempt to create it. 
-        'If THAT fails, then you get a message box telling you that you are an awful programmer, and it stops trying.
-
-
-        '***UPDATE 2/14/2012 (12:57am EST)***
-        'Today I got a phone call that this application seemed to have messed up some parts from an older model.
-        'I, of course, mention above that I thought that this was simply due to the age of the part file, but then
-        'I kept doing more digging in the hopes that I could find some difference between a new file, and a file
-        'that had been carried over from previous Inventor releases. Then while looking through various things, I realized something... 
-        '
-        'Some of these parts, when not modified, have no PropertySet Item 5 AKA: "iLogicEventsRules" !!!
-        'well duuuuuuuH. 
-        '
-        'Needless to say, I believe that this was casuing the problem all along. Before this code below looked like : 
-        '
-        'Try
-        '   customIPropSet = cDocument.PropertySets.Item("iLogicEventsRules") 
-        'Catch ex As Exception 
-        '   Try
-        '       Call cDocument.PropertSets.Add("iLogicEventsRules") 
-        'Catch ex2 As Exception
-        '   MessageBox.Show("Blahblahblah","")
-        '   Exit Sub
-        'End Try
-        'End Try
-        '
-        ' See the error? 
-        'I didn't at first either, until I realized that I had totally called to add that PropertySet in the incorrect way. 
-        'There needs to be an ID that goes along with that, in this case : "{2C540830-0723-455E-A8E2-891722EB4C3E}"
-        'With out that, you are just adding a random new Property Set that Inventor doesn't really have a clue as to how to use. 
-        'Then if you go into your part and attempt to make an Event Parameter, it can't, because the darn name is already in use
-        'but even though the name is in use, there is no internal name that would even allow for an Event Trigger to use that Set,
-        'and, AHHHHHH! on into a Just In Time crash error that doesn't tell you much of anything. 
-        '
-        'Needless to say, this should not only create a new correct PropertySet for those Event Triggers, but it should also 
-        'delete any sets that have a name, but do not have that associated internal ID to go along with it. 
-
-
         Try
-            customIPropSet = cDocument.PropertySets.Item("iLogicEventsRules")
+            customIPropSet = cDocument.PropertySets.Item("{2C540830-0723-455E-A8E2-891722EB4C3E}")
             If customIPropSet.InternalName <> "{2C540830-0723-455E-A8E2-891722EB4C3E}" Then
                 Call customIPropSet.Delete()
                 Call cDocument.PropertySets.Add("iLogicEventsRules", "{2C540830-0723-455E-A8E2-891722EB4C3E}")
+                customIPropSet = cDocument.PropertySets.Item("{2C540830-0723-455E-A8E2-891722EB4C3E}")
             End If
 
         Catch ex As Exception
             Try
                 Call cDocument.PropertySets.Add("iLogicEventsRules", "{2C540830-0723-455E-A8E2-891722EB4C3E}")
+                customIPropSet = cDocument.PropertySets.Item("{2C540830-0723-455E-A8E2-891722EB4C3E}")
             Catch ex2 As Exception
                 MessageBox.Show("Unable to create the Event Triggers property for this file!", "Event Triggers Not Set")
                 Exit Sub
@@ -872,7 +747,7 @@ NotFound:
         End Try
 
         'Sets customIPropSet to equal the Item that contains the Event Triggers of the open document.
-        customIPropSet = cDocument.PropertySets.Item("iLogicEventsRules")
+        'customIPropSet = cDocument.PropertySets.Item("iLogicEventsRules")
 
         'If there is an item (Event Trigger) found, then... 
         If customIPropSet.Count > 0 Then
@@ -892,41 +767,6 @@ NotFound:
 
                 Dim idTest As Integer
                 idTest = (Convert.ToInt32(Math.Abs(customIPropSet.Item(propItemCounter).PropId / 100))) * 100
-
-
-                '----------------------------
-
-
-                'Remember that TriggerPropName is = to BaseID from our last Sub. 
-
-                'We want to look at the Name of the property/item that we are currently on. 
-                'Specifically, we want to see if the Property name (WITHOUT the numerical value added onto the end)
-                'is equal to the TriggerPropName. 
-
-                'UPDATE *Feb/3/2012
-                'After recently encountering a strange error, I found that occasionally Inventor will throw a non standard TriggerPropName
-                'into the Property Name slot. In the cases that I found, it would use a generic term of "iLogicEventStrings6". 
-                'If that is the case, the numerical value at the end of that string, does not represent the fire order of that Trigger. 
-                'Instead I believe it indicates it's position in the Count stack of the actual PropertySet (IE: Which Property inside of
-                'the PropertySet that it is)... This is confusing to me, as at that point, the only way to identify which EventTrigger
-                'it actually is, is by looking at the PropID. It seems that this will always follow a syntax (which is good!). 
-                'So the below If statement used to only have the part about matching the Name strings, but now will attempt to do math
-                'on the PropID to make sure that it's not one of these strange anomalous Properties...
-
-                'Example: Your property returned something like ("Rule1", "iLogicEventSrting4", 701), and we just happened to be trying
-                'to add a BeforeDocSave Event Trigger (which has a base PropID of 700), it would do the following math : 
-
-                '701-(701-700) = 700 (<--- THAT IS DUMB MATH AND WILL NOT WORK! 1000 - (1000-700) = 700! We don't want that! 
-                '
-                '*Update 2/10/2012 
-                '
-                'Instead we want : (Convert.ToInt32(Math.Abs(customIPropSet.Item(propItemCounter).PropId / 100))) * 100 
-                '
-                'which is just what idTest is doing up there!
-                '
-                'So instead of checking against the string name of the ID property, I've now decided to only check against the 
-                'the Property ID, as it seems to be the most absolute thing about these properties. 
-
                 
                 If idTest = BaseID Then
 
@@ -1024,6 +864,139 @@ NotFound:
         vInfo = System.Reflection.Assembly.GetExecutingAssembly.GetName.Version.ToString
 
         ToolStripStatusLabel1.Text = "Current Version : " & vInfo
+
+    End Sub
+
+
+
+    Private Sub RunRulesOnCreation_CheckBox_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles RunRulesOnCreation_CheckBox.CheckedChanged
+
+        If RunRulesOnCreation_CheckBox.Checked = True Then
+            DeleteAfterRun_RadioButton.Enabled = True
+            KeepAfterRun_RadioButton.Enabled = True
+            KeepAfterRun_RadioButton.Checked = True
+            DeleteAfterRun_RadioButton.Checked = False
+        Else
+            DeleteAfterRun_RadioButton.Enabled = False
+            KeepAfterRun_RadioButton.Enabled = False
+        End If
+
+    End Sub
+
+    Private Function getFiletypes(ByVal path As String, ByVal args() As String) As Stack
+        Dim _files As New Stack
+        'Dim folder As New DirectoryInfo(path)
+        For Each arg In args
+            For Each _file In System.IO.Directory.GetFiles(path, arg, IO.SearchOption.AllDirectories)
+                _files.Push(_file)
+            Next
+        Next
+        Return _files
+    End Function
+
+
+    Private Sub SelectfromInventorFileButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SelectfromInventorFileButton.Click
+
+        Try
+            RuleSelectorForm.Show()
+
+            Dim iLogicObject As Object
+            'Check to make sure that the iLogic addin for Inventor is currently running 
+            iLogicObject = GetiLogicAddin(openInventorApp)
+
+            'If it couldn't be found then... 
+            If (iLogicObject Is Nothing) Then
+                MessageBox.Show("Could not find ilogic automation plugin! Unable to complete actions!", "Plugin Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Exit Sub
+            End If
+            '            MessageBox.Show("Inventor has been started in the background")
+        Catch ex As Exception
+        End Try
+    End Sub
+
+
+    Private Sub DeleteRulesButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DeleteRulesButton.Click
+
+        openInventorApp.SilentOperation = True
+        Dim iLogicObject As Object
+
+        'Check to make sure that the iLogic addin for Inventor is currently running and well. 
+        iLogicObject = GetiLogicAddin(openInventorApp)
+
+        'If it couldn't be found then... 
+        If (iLogicObject Is Nothing) Then
+            MessageBox.Show("Could not find ilogic automation plugin! Unable to complete actions!", "Plugin Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Exit Sub
+        End If
+
+        'If the plugin was found, then we'll continue -
+
+        'We'll start by making initializing a new Integer called listCount
+        Dim listCount As Integer
+
+        'We'll also tell our progress bar to only be as long, as there are items to count.
+        ToolStripProgressBar1.Maximum = ListBox1.Items.Count
+
+        'In addition we can also set up just how much each step in our progress bar will take us.
+        ToolStripProgressBar1.Step = 1
+
+        'We'll make a loop that counts down from the number items in our file queue list
+        'one by one. 
+        For listCount = ListBox1.Items.Count To 1 Step -1
+
+            'Create and empty Document called singleDoc
+            Dim singleDoc As Document
+
+            'Sets singleDoc to the item that is currently being looked at, from our file queue.
+            'This also opens the document in Inventor for editing. 
+            singleDoc = openInventorApp.Documents.Open(ListBox1.Items(listCount - 1), True)
+
+            'Let's make sure we're allowed to modify this document. 
+            'If the file is 'Read Only' then it will be skipped!
+            If singleDoc.IsModifiable = True Then
+
+                'If we can modify it, then we'll continue. 
+                iLogicObject.DeleteAllRulesInDocument(singleDoc)
+
+                'Dim saveEnabled As Boolean = iLogicObject.RulesOnEventsEnabled
+                'iLogicObject.RulesOnEventsEnabled = False
+                Try
+                    'Save the document and all dependant documents.
+                    Call singleDoc.Save2(True)
+
+                    'Just incase the file you're attempting to save to, can't be saved to...
+
+                Catch ex As Exception
+
+                    MessageBox.Show("The directory / file you are attempting to save to is Read-Only." & vbCrLf & _
+                                    "Please make sure that you have permission to write to this directory / file before attempting to continue.", _
+                                    "Read-Write Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Exit Sub
+
+                Finally
+
+                End Try
+
+                'Closes the document without any hassle. 
+                Call openInventorApp.ActiveDocument.Close(True)
+            Else
+                'This area is blank. 
+                'If you want something to happen when you find that a document can not be modified, then you would put it here.
+                'Otherwise, you can leave this area blank. 
+            End If
+
+            'Last but not least, let's show that we've completed work on the file, by increasing our progress bar by one step
+            ToolStripProgressBar1.PerformStep()
+            'On to the next file.
+        Next
+
+        openInventorApp.SilentOperation = False
+        openInventorApp.Visible = False
+        'Once everything is done, and all the files have been modified, we'll inform the user.
+        MessageBox.Show("Operation Complete!", "Status : Finished")
+
+        'We'll also reset the progress bar back to 0
+        ToolStripProgressBar1.Value = 0
 
     End Sub
 End Class

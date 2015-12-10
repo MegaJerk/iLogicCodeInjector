@@ -1,0 +1,12 @@
+C:\Users\Noah\Documents\GitHub\Code Injector\Code Injector\obj\x86\Release\Code Injector.vbproj.ResolveComReference.cache
+C:\Users\Noah\Documents\GitHub\Code Injector\Code Injector\bin\Release\Code Injector.exe
+C:\Users\Noah\Documents\GitHub\Code Injector\Code Injector\bin\Release\Code Injector.pdb
+C:\Users\Noah\Documents\GitHub\Code Injector\Code Injector\bin\Release\Code Injector.xml
+C:\Users\Noah\Documents\GitHub\Code Injector\Code Injector\obj\x86\Release\Code Injector.vbprojResolveAssemblyReference.cache
+C:\Users\Noah\Documents\GitHub\Code Injector\Code Injector\obj\x86\Release\Code_Injector.Code_Injector.resources
+C:\Users\Noah\Documents\GitHub\Code Injector\Code Injector\obj\x86\Release\Code_Injector.RuleSelectorForm.resources
+C:\Users\Noah\Documents\GitHub\Code Injector\Code Injector\obj\x86\Release\Code_Injector.Resources.resources
+C:\Users\Noah\Documents\GitHub\Code Injector\Code Injector\obj\x86\Release\Code Injector.vbproj.GenerateResource.Cache
+C:\Users\Noah\Documents\GitHub\Code Injector\Code Injector\obj\x86\Release\Code Injector.exe
+C:\Users\Noah\Documents\GitHub\Code Injector\Code Injector\obj\x86\Release\Code Injector.xml
+C:\Users\Noah\Documents\GitHub\Code Injector\Code Injector\obj\x86\Release\Code Injector.pdb

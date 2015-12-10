@@ -12,7 +12,7 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyDescription("A rule injector to be used with Autodesk's Inventor software. Will allow for the easy replacement of existing rules, or the creation of new rules in addition to setting Event Triggers.")> 
 <Assembly: AssemblyCompany("")> 
 <Assembly: AssemblyProduct("")> 
-<Assembly: AssemblyCopyright("Copyright ©  2012 : MegaJerk (copy away!)")> 
+<Assembly: AssemblyCopyright("Copyright ©  2015 : MegaJerk (copy away!)")> 
 <Assembly: AssemblyTrademark("Autodesk® Inventor is a registered trademark of Autodesk Inc. The code contained in these files, as well as the program built using that code, were not created by Autodesk, who can not be held liable for any misuse, damage, or loss of data as a result of using said code / program.")> 
 
 <Assembly: ComVisible(False)>
@@ -31,5 +31,5 @@ Imports System.Runtime.InteropServices
 ' by using the '*' as shown below:
 ' <Assembly: AssemblyVersion("1.0.*")> 
 
-<Assembly: AssemblyVersion("4.3.0.*")> 
-<Assembly: AssemblyFileVersion("4.3.0.0")> 
+<Assembly: AssemblyVersion("4.4.0.*")> 
+<Assembly: AssemblyFileVersion("4.4.0.0")> 

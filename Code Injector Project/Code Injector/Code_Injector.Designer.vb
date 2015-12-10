@@ -26,6 +26,7 @@ Partial Class Code_Injector
         Me.AddRules_Button = New System.Windows.Forms.Button()
         Me.Rule_Contents_TextBox = New System.Windows.Forms.TextBox()
         Me.Rule_Input_GroupBox1 = New System.Windows.Forms.GroupBox()
+        Me.SelectfromInventorFileButton = New System.Windows.Forms.Button()
         Me.RuleNameTextBox1 = New System.Windows.Forms.TextBox()
         Me.Label2 = New System.Windows.Forms.Label()
         Me.Label1 = New System.Windows.Forms.Label()
@@ -44,12 +45,15 @@ Partial Class Code_Injector
         Me.Label5 = New System.Windows.Forms.Label()
         Me.EventTriggers_CheckedListBox1 = New System.Windows.Forms.CheckedListBox()
         Me.GroupBox2 = New System.Windows.Forms.GroupBox()
+        Me.CheckDWG = New System.Windows.Forms.CheckBox()
         Me.ClearFolderList_Button = New System.Windows.Forms.Button()
         Me.ClearSelectedFromList_Button = New System.Windows.Forms.Button()
         Me.Label4 = New System.Windows.Forms.Label()
         Me.Label3 = New System.Windows.Forms.Label()
         Me.ExitProgram_Button = New System.Windows.Forms.Button()
         Me.GroupBox3 = New System.Windows.Forms.GroupBox()
+        Me.DeleteAfterRun_RadioButton = New System.Windows.Forms.RadioButton()
+        Me.KeepAfterRun_RadioButton = New System.Windows.Forms.RadioButton()
         Me.RunRulesOnCreation_CheckBox = New System.Windows.Forms.CheckBox()
         Me.OverwriteDuplicateRules_CheckBox = New System.Windows.Forms.CheckBox()
         Me.HelpProvider1 = New System.Windows.Forms.HelpProvider()
@@ -57,6 +61,7 @@ Partial Class Code_Injector
         Me.ToolStripProgressBar1 = New System.Windows.Forms.ToolStripProgressBar()
         Me.InventorLoadingText = New System.Windows.Forms.ToolStripStatusLabel()
         Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.DeleteRulesButton = New System.Windows.Forms.Button()
         Me.Rule_Input_GroupBox1.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
@@ -95,6 +100,7 @@ Partial Class Code_Injector
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Rule_Input_GroupBox1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink
+        Me.Rule_Input_GroupBox1.Controls.Add(Me.SelectfromInventorFileButton)
         Me.Rule_Input_GroupBox1.Controls.Add(Me.RuleNameTextBox1)
         Me.Rule_Input_GroupBox1.Controls.Add(Me.Label2)
         Me.Rule_Input_GroupBox1.Controls.Add(Me.Label1)
@@ -107,6 +113,16 @@ Partial Class Code_Injector
         Me.Rule_Input_GroupBox1.TabIndex = 2
         Me.Rule_Input_GroupBox1.TabStop = False
         Me.Rule_Input_GroupBox1.Text = "Rule Builder :"
+        '
+        'SelectfromInventorFileButton
+        '
+        Me.SelectfromInventorFileButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.SelectfromInventorFileButton.Location = New System.Drawing.Point(383, 50)
+        Me.SelectfromInventorFileButton.Name = "SelectfromInventorFileButton"
+        Me.SelectfromInventorFileButton.Size = New System.Drawing.Size(164, 23)
+        Me.SelectfromInventorFileButton.TabIndex = 5
+        Me.SelectfromInventorFileButton.Text = "Import from Inventor file"
+        Me.SelectfromInventorFileButton.UseVisualStyleBackColor = True
         '
         'RuleNameTextBox1
         '
@@ -152,12 +168,12 @@ Partial Class Code_Injector
         Me.ImportRuleFromFile_Button.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.HelpProvider1.SetHelpString(Me.ImportRuleFromFile_Button, "Allows you to import the contents of a text file (.txt), a Visual Basics file (.v" & _
         "b), or an iLogic file (.iLogicVB), directly into the Rule Code Text box.")
-        Me.ImportRuleFromFile_Button.Location = New System.Drawing.Point(607, 48)
+        Me.ImportRuleFromFile_Button.Location = New System.Drawing.Point(383, 18)
         Me.ImportRuleFromFile_Button.Name = "ImportRuleFromFile_Button"
         Me.HelpProvider1.SetShowHelp(Me.ImportRuleFromFile_Button, True)
         Me.ImportRuleFromFile_Button.Size = New System.Drawing.Size(164, 25)
         Me.ImportRuleFromFile_Button.TabIndex = 4
-        Me.ImportRuleFromFile_Button.Text = "Import From File"
+        Me.ImportRuleFromFile_Button.Text = "Import From text file"
         Me.ImportRuleFromFile_Button.UseVisualStyleBackColor = True
         '
         'RuleFileDialog
@@ -175,7 +191,7 @@ Partial Class Code_Injector
         Me.SelectFolder_Button.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.HelpProvider1.SetHelpString(Me.SelectFolder_Button, "Used to select a folder from a user specified directory. Use the check boxes abov" & _
         "e to control which individual file types will be selected. ")
-        Me.SelectFolder_Button.Location = New System.Drawing.Point(607, 98)
+        Me.SelectFolder_Button.Location = New System.Drawing.Point(607, 137)
         Me.SelectFolder_Button.Name = "SelectFolder_Button"
         Me.HelpProvider1.SetShowHelp(Me.SelectFolder_Button, True)
         Me.SelectFolder_Button.Size = New System.Drawing.Size(164, 25)
@@ -300,6 +316,7 @@ Partial Class Code_Injector
         Me.GroupBox2.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.GroupBox2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink
+        Me.GroupBox2.Controls.Add(Me.CheckDWG)
         Me.GroupBox2.Controls.Add(Me.ClearFolderList_Button)
         Me.GroupBox2.Controls.Add(Me.ClearSelectedFromList_Button)
         Me.GroupBox2.Controls.Add(Me.Label4)
@@ -315,6 +332,19 @@ Partial Class Code_Injector
         Me.GroupBox2.TabIndex = 1
         Me.GroupBox2.TabStop = False
         Me.GroupBox2.Text = "Inventor File Selection"
+        '
+        'CheckDWG
+        '
+        Me.CheckDWG.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.HelpProvider1.SetHelpString(Me.CheckDWG, "By selecting this item before searching a folder / directory, all files with the " & _
+        "extension '.idw' will be added to the File Selection List.")
+        Me.CheckDWG.Location = New System.Drawing.Point(713, 98)
+        Me.CheckDWG.Name = "CheckDWG"
+        Me.HelpProvider1.SetShowHelp(Me.CheckDWG, True)
+        Me.CheckDWG.Size = New System.Drawing.Size(58, 17)
+        Me.CheckDWG.TabIndex = 9
+        Me.CheckDWG.Text = "DWG"
+        Me.CheckDWG.UseVisualStyleBackColor = True
         '
         'ClearFolderList_Button
         '
@@ -376,14 +406,40 @@ Partial Class Code_Injector
         Me.GroupBox3.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.GroupBox3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink
+        Me.GroupBox3.Controls.Add(Me.DeleteAfterRun_RadioButton)
+        Me.GroupBox3.Controls.Add(Me.KeepAfterRun_RadioButton)
         Me.GroupBox3.Controls.Add(Me.RunRulesOnCreation_CheckBox)
         Me.GroupBox3.Controls.Add(Me.OverwriteDuplicateRules_CheckBox)
         Me.GroupBox3.Location = New System.Drawing.Point(795, 308)
         Me.GroupBox3.Name = "GroupBox3"
-        Me.GroupBox3.Size = New System.Drawing.Size(237, 181)
+        Me.GroupBox3.Size = New System.Drawing.Size(237, 151)
         Me.GroupBox3.TabIndex = 4
         Me.GroupBox3.TabStop = False
         Me.GroupBox3.Text = "Advanced Options"
+        '
+        'DeleteAfterRun_RadioButton
+        '
+        Me.DeleteAfterRun_RadioButton.AutoSize = True
+        Me.DeleteAfterRun_RadioButton.Enabled = False
+        Me.DeleteAfterRun_RadioButton.Location = New System.Drawing.Point(28, 88)
+        Me.DeleteAfterRun_RadioButton.Name = "DeleteAfterRun_RadioButton"
+        Me.DeleteAfterRun_RadioButton.Size = New System.Drawing.Size(118, 17)
+        Me.DeleteAfterRun_RadioButton.TabIndex = 16
+        Me.DeleteAfterRun_RadioButton.TabStop = True
+        Me.DeleteAfterRun_RadioButton.Text = "Delete rule after run"
+        Me.DeleteAfterRun_RadioButton.UseVisualStyleBackColor = True
+        '
+        'KeepAfterRun_RadioButton
+        '
+        Me.KeepAfterRun_RadioButton.AutoSize = True
+        Me.KeepAfterRun_RadioButton.Enabled = False
+        Me.KeepAfterRun_RadioButton.Location = New System.Drawing.Point(28, 64)
+        Me.KeepAfterRun_RadioButton.Name = "KeepAfterRun_RadioButton"
+        Me.KeepAfterRun_RadioButton.Size = New System.Drawing.Size(112, 17)
+        Me.KeepAfterRun_RadioButton.TabIndex = 15
+        Me.KeepAfterRun_RadioButton.TabStop = True
+        Me.KeepAfterRun_RadioButton.Text = "Keep rule after run"
+        Me.KeepAfterRun_RadioButton.UseVisualStyleBackColor = True
         '
         'RunRulesOnCreation_CheckBox
         '
@@ -391,9 +447,9 @@ Partial Class Code_Injector
         Me.RunRulesOnCreation_CheckBox.Location = New System.Drawing.Point(6, 41)
         Me.RunRulesOnCreation_CheckBox.Name = "RunRulesOnCreation_CheckBox"
         Me.HelpProvider1.SetShowHelp(Me.RunRulesOnCreation_CheckBox, True)
-        Me.RunRulesOnCreation_CheckBox.Size = New System.Drawing.Size(135, 17)
+        Me.RunRulesOnCreation_CheckBox.Size = New System.Drawing.Size(71, 17)
         Me.RunRulesOnCreation_CheckBox.TabIndex = 13
-        Me.RunRulesOnCreation_CheckBox.Text = "Run Rules On Creation"
+        Me.RunRulesOnCreation_CheckBox.Text = "Run Rule"
         Me.RunRulesOnCreation_CheckBox.UseVisualStyleBackColor = True
         '
         'OverwriteDuplicateRules_CheckBox
@@ -442,12 +498,23 @@ Partial Class Code_Injector
         Me.ToolStripStatusLabel1.Text = "Current Version::"
         Me.ToolStripStatusLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
+        'DeleteRulesButton
+        '
+        Me.DeleteRulesButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.DeleteRulesButton.Location = New System.Drawing.Point(823, 477)
+        Me.DeleteRulesButton.Name = "DeleteRulesButton"
+        Me.DeleteRulesButton.Size = New System.Drawing.Size(164, 23)
+        Me.DeleteRulesButton.TabIndex = 17
+        Me.DeleteRulesButton.Text = "Delete all rules"
+        Me.DeleteRulesButton.UseVisualStyleBackColor = True
+        '
         'Code_Injector
         '
         Me.AcceptButton = Me.AddRules_Button
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1045, 597)
+        Me.Controls.Add(Me.DeleteRulesButton)
         Me.Controls.Add(Me.StatusStrip1)
         Me.Controls.Add(Me.GroupBox3)
         Me.Controls.Add(Me.ExitProgram_Button)
@@ -465,7 +532,7 @@ Partial Class Code_Injector
         Me.MinimumSize = New System.Drawing.Size(1061, 635)
         Me.Name = "Code_Injector"
         Me.HelpProvider1.SetShowHelp(Me, True)
-        Me.Text = "Code Injector by : MegaJerk - 2012"
+        Me.Text = "Code Injector for 2011-2013"
         Me.Rule_Input_GroupBox1.ResumeLayout(False)
         Me.Rule_Input_GroupBox1.PerformLayout()
         Me.GroupBox1.ResumeLayout(False)
@@ -514,5 +581,10 @@ Partial Class Code_Injector
     Friend WithEvents ToolStripProgressBar1 As System.Windows.Forms.ToolStripProgressBar
     Friend WithEvents ToolStripStatusLabel1 As System.Windows.Forms.ToolStripStatusLabel
     Friend WithEvents InventorLoadingText As System.Windows.Forms.ToolStripStatusLabel
+    Friend WithEvents DeleteAfterRun_RadioButton As System.Windows.Forms.RadioButton
+    Friend WithEvents KeepAfterRun_RadioButton As System.Windows.Forms.RadioButton
+    Friend WithEvents CheckDWG As System.Windows.Forms.CheckBox
+    Friend WithEvents SelectfromInventorFileButton As System.Windows.Forms.Button
+    Friend WithEvents DeleteRulesButton As System.Windows.Forms.Button
 
 End Class
