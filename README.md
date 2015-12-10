@@ -18,7 +18,7 @@ As always, I have included all of the code files / Visual Studios solution for e
 learn the deeper mysteries of how iLogic Event Triggers are being created, or who just wants to 
 laugh at my terrible 'Fisher Price - My First Software' code.
 
-If you're just interested in the updated executable (.exe) [go here](../tree/master/Code%20Injector/Code%20Injector/obj/x86/Release) 
+If you're just interested in the updated executable (.exe) [go here](../blob/master/Code%20Injector%20Project/Code%20Injector/obj/x86/Release/Code%20Injector.exe) 
 
 
 ## List of Changes 
