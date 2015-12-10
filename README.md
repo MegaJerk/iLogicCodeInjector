@@ -25,3 +25,8 @@ using the original (old) format, subsequently hiding itself from Inventor.
 
 **3.** Corrected the value for iProperties controlling the On Drawing View event triggers. 
 
+### Special Thanks 
+
+Special thanks to Bob Van der Donck and the crew (defunct or not) over at beinginventive.typepad.com. He made some wonderful contributions to this project after its initial debut, and was the person responsible for sparking the initial idea in the first place. 
+
+Props! 
