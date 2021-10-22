@@ -1,4 +1,21 @@
+# The Real Very Final Update (10/22/2021)
+
+I received some notifications that a few users were posting on the original Autodesk forum thread in which I started this CodeInjetor project. It would seem that Autodesk has finally taken the time to create a more modern tool that does much of what this does, and more! You can find it on Autodesk's App Store [here](https://apps.autodesk.com/INVNTOR/en/Detail/Index?id=7381718697722491251)!
+
+Unfortunately you will need a Subscription / License in order to download it, but Students / Educators can grab that for free.
+
+Though it certainly doesn't mean that this software is no longer needed (for earlier versions or for learning), it does mean that there will be less need for it going forward, which is fine.
+
+Thank you to everyone who has ever posted about how much this tool has helped them to work. I never would have thought that such a niche thing could be so readily used by an entire community, but I'm happy to see that it was helpful.
+
+~~Until next time...~~
+
+Keep Making!
+---
+
+
 # Clarification Update! (11/2/2020)
+
 This project has long been mothballed by myself and serves only as a guide to anyone who is in search of some specific answers. That said, there are a few things that have changed in Inventor / Community knowledge that warrent me to update some of the information here.
 
 My previous table of the iProperty names and ID ranges is now out of date. Thanks to the work of Autodesk Community member WCrihfield (who created a new list of Property Names and ID Ranges alongside many other fixes and informative posts regarding Event Triggers), I am updating this Readme with their new values, which are as follows:
